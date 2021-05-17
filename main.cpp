@@ -10,7 +10,7 @@
 #include "stdio.h"
 #include "vector"
 #include "LogSystem.h"
-
+#include "CharArrStr.h"
 int main() {
 #if 0
     {
@@ -107,25 +107,38 @@ int main() {
     }
 #endif
 
-#if 1
-//  test log system
+#if 0
+    {
+        //  test log system
+        RockLogSystem *logsys = RockLogSystem::get_instance();
+        int i = 0;
+        while (true) {
+            logsys->add_log_info_item(logsys->trans_id(0, 0), std::string(32, 'a').data());
+            logsys->add_log_info_item(logsys->trans_id(1, 0), std::string(32, 'b').data());
+            logsys->add_log_info_item(logsys->trans_id(2, 0), std::string(32, 'c').data());
+            logsys->add_log_info_item(logsys->trans_id(3, 0), std::string(32, 'd').data());
 
-#endif
-    RockLogSystem *logsys = RockLogSystem::get_instance();
-    int i = 0;
-    while (true) {
-        logsys->add_log_info_item(logsys->trans_id(0, 0), std::string(32, 'a').data());
-        logsys->add_log_info_item(logsys->trans_id(1, 0), std::string(32, 'b').data());
-        logsys->add_log_info_item(logsys->trans_id(2, 0), std::string(32, 'c').data());
-        logsys->add_log_info_item(logsys->trans_id(3, 0), std::string(32, 'd').data());
-
-        logsys->add_log_info_item(logsys->trans_id(0, 1), std::string(32, 'e').data());
-        logsys->add_log_info_item(logsys->trans_id(1, 1), std::string(32, 'f').data());
-        logsys->add_log_info_item(logsys->trans_id(2, 1), std::string(32, 'g').data());
-        logsys->add_log_info_item(logsys->trans_id(3, 1), std::string(32, 'h').data());
-        i++;
-        if (i == 1000) {
-            break;
+            logsys->add_log_info_item(logsys->trans_id(0, 1), std::string(32, 'e').data());
+            logsys->add_log_info_item(logsys->trans_id(1, 1), std::string(32, 'f').data());
+            logsys->add_log_info_item(logsys->trans_id(2, 1), std::string(32, 'g').data());
+            logsys->add_log_info_item(logsys->trans_id(3, 1), std::string(32, 'h').data());
+            i++;
+            if (i == 1000) {
+                break;
+            }
         }
+
+    }
+#endif
+
+    {
+        //  字符串
+       bys_practice::CharArrStr c;
+       char bec[24] = {};
+       c.copy_string("hello world!", bec);
+        printf("be copy: %s\n", bec);
+        memset(bec,0,sizeof bec);
+        c.copy_string_while("hello world!", bec);
+        printf("be copy: %s\n", bec);
     }
 }

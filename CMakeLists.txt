@@ -13,4 +13,4 @@ add_executable(StudyAndPractice
         FileOperate.cpp
         FileOperate.h
         main.cpp
-        CppBase.cpp CppBase.h DictionarySearch.cpp DictionarySearch.h heap_stack_global.cpp heap_stack_global.h LogSystem.cpp LogSystem.h)
+        CppBase.cpp CppBase.h DictionarySearch.cpp DictionarySearch.h heap_stack_global.cpp heap_stack_global.h LogSystem.cpp LogSystem.h CharArrStr.cpp CharArrStr.h)

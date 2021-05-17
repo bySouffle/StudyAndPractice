@@ -4,11 +4,13 @@
 
 #include "LogSystem.h"
 
-RockLogSystem::RockLogSystem() {
+RockLogSystem::RockLogSystem():kscript_url_("limit_number_logfile.sh") {
+    kAbsUrl_ = get_current_url();
     init_log_system();
 }
 
 std::string RockLogSystem::get_current_url() {
+#if 1
     char url[kUrlSize_] = {};
     if (!getcwd(url, kUrlSize_)) {
         perror("获取当前目录失败！\n");
@@ -17,6 +19,7 @@ std::string RockLogSystem::get_current_url() {
         str_url.append(url);
         return str_url;
     }
+#endif
 #if 0
     char abs_path[1024] = {};
     int cnt = readlink("/proc/self/exe", abs_path, 1024);//获取可执行程序的绝对路径
@@ -47,22 +50,25 @@ void RockLogSystem::mk_device_logdir(std::vector<std::string> *dirname) {
         if (opendir(device_dir.data()) == nullptr) {
             mkdir(device_dir.data(), 0775);
         }
-        std::string limit_file_sh = "#! /bin/bash\n"
-                                    "# 定义监测文件夹\n"
-                                    "BACK_DIR=$(dirname $(readlink -f $0))\n"
-                                    "count2=$(ls $BACK_DIR -l | grep \"/*.log\" | wc -l)\n"
-                                    "if [ $count2 -gt 3 ]; then\n"
-                                    "   rm $(ls -rt | head -n1)\n"
-                                    "fi\n";
-
-        std::string clear_uart_json_filename = device_dir + "/limit_number_logfile.sh";
-        int fd = open(clear_uart_json_filename.data(),
-                      O_RDWR | O_CREAT | O_TRUNC, 0775);
-        write(fd, limit_file_sh.data(), limit_file_sh.size());
-        close(fd);
-
-
     }
+
+    std::string limit_file_sh = "#! /bin/bash\n"
+                                "# 定义监测文件夹\n"
+                                "BACK_DIR=$(dirname $(readlink -f $0))\n"
+                                "OPT_DIR=${BACK_DIR}/$1 \n"
+                                "cd $OPT_DIR\n"
+                                "count2=$(ls $OPT_DIR -l | grep \"/*.log\" | wc -l)\n"
+                                "echo file cout: $count2\n"
+                                "if [ $count2 -gt 10 ]; then\n"
+                                "   rm $(ls -rt | head -n1)\n"
+                                "fi\n";
+
+    std::string clear_uart_json_filename = url + "/limit_number_logfile.sh";
+    int fd = open(clear_uart_json_filename.data(),
+                  O_RDWR | O_CREAT | O_TRUNC, 0775);
+    write(fd, limit_file_sh.data(), limit_file_sh.size());
+    close(fd);
+
 #if 0
     else if (strcmp(dirname->at(i).data(), "/can_log_dir") == 0) {
 
@@ -114,7 +120,7 @@ std::vector<std::string> *RockLogSystem::get_device_vec() {
 void RockLogSystem::add_to_buff(std::string *buf, const char *data) {
     buf->append(data);
 }
-
+#if 0
 int RockLogSystem::add_log_info_item(int id, std::string *buf, const char *data) {
     int index = get_mapItemIndex_from_id(id, &map_);
     MapDeviceID_t *item = get_mapItem_from_index(index, &map_);
@@ -135,6 +141,7 @@ int RockLogSystem::add_log_info_item(int id, std::string *buf, const char *data)
             item->fd = kInvalid;
             item->filename.append(get_new_filename());
             item->fd = get_new_log_file_fd(&item->filename);
+
             limit_number_file(item->filedir);
         }
     }
@@ -143,6 +150,7 @@ int RockLogSystem::add_log_info_item(int id, std::string *buf, const char *data)
 
     return 0;
 }
+#endif
 
 std::string RockLogSystem::get_current_time() {
     time_t ptime;
@@ -164,12 +172,26 @@ std::string RockLogSystem::get_current_time() {
 }
 
 int RockLogSystem::get_new_log_file_fd(std::string *filename) {
-    int fd = open(filename->data(), O_RDWR | O_CREAT | O_TRUNC, 0775);
+    int fd = open(filename->data(), O_RDWR | O_CREAT /*| O_TRUNC*/, 0775);
     return fd;
 }
 
 std::string RockLogSystem::get_new_filename() {
-    std::string filename = get_current_time();
+    time_t ptime;
+    struct tm *tmTime;
+    struct timeval m_time = {};
+    time(&ptime);
+    tmTime = localtime(&ptime);
+    gettimeofday(&m_time, nullptr);
+    char datetime[32];
+
+    sprintf(datetime, "%04d-%02d-%02d_%02d_%02d_%02d_%02ld",
+            tmTime->tm_year + 1900, tmTime->tm_mon + 1,
+            tmTime->tm_mday, tmTime->tm_hour,
+            tmTime->tm_min, tmTime->tm_sec,
+            clock());
+
+    std::string filename = {datetime};
     filename.append(".log");
     return filename;
 }
@@ -226,12 +248,14 @@ MapDeviceID_t *RockLogSystem::get_mapItem_from_index(int index, std::vector<stru
 }
 
 
-int RockLogSystem::limit_number_file(std::string *url) {
-    url->insert(0, ".");
-    url->append("/limit_number_logfile.sh");
-    system(url->data());
-    return 0;
-}
+//int RockLogSystem::limit_number_file(std::string url) {
+//
+//    url.insert(0, ".");
+//    url.append("/limit_number_logfile.sh");
+//    printf("sh url:%s\n",url.data());
+//    system(url.data());
+//    return 0;
+//}
 
 int RockLogSystem::add_log_info_item(int id, const char *data) {
     int index = get_mapItemIndex_from_id(id, &map_);
@@ -239,30 +263,43 @@ int RockLogSystem::add_log_info_item(int id, const char *data) {
         return kGetIndexError;
     }
     MapDeviceID_t *item = get_mapItem_from_index(index, &map_);
+    //  检查文件大小是否超过范围
+    struct stat file_stats = {};
+    std::string file_url = get_new_filename_url(item);
+    _print("file_url :%s\n", file_url.data());
+    stat(file_url.data(), &file_stats);
+    _print("file size: %ld\n", file_stats.st_size);
+    if (file_stats.st_size > kFileSize_) {
+        if (item->fd > 0) {
+            close(item->fd);
+            sync();
+            item->filename.clear();
+            item->fd = kInvalid;
+            item->filename.append(get_new_filename());
+            std::string new_file_url = get_new_filename_url(item);
+            item->fd = get_new_log_file_fd(&new_file_url);
+            _print("run fd:%d\n",item->fd);
+            std::string script_url = kAbsUrl_;
+//                    get_runsh_url(item, &kscript_url_);
+//            script_url.insert(0, ".");
+            script_url.append("/");
+            script_url.append(kscript_url_);
+            script_url.append(" ");
+            script_url.append(*(item->filedir));
+            _print("sh cmd: %s \n", script_url.data());
+
+            system(script_url.data());
+//            usleep(1000);
+//            limit_number_file(item->filedir);
+        }
+    }
 
     if ((item->buf->length() + strlen(data)) > kBufSize_)    // 超过缓存区大小，将缓存区数据写入文件清空缓存区
     {
         write_buff2file(item->fd, item->buf);
         item->buf->clear();
     }
-    //  检查文件大小是否超过范围
-    struct stat file_stats = {};
-    std::string file_url = get_new_filename_url(item);
-    stat(file_url.data(), &file_stats);
-    if (file_stats.st_size > kFileSize_) {
-        if (item->fd > 0) {
-
-            close(item->fd);
-            item->filename.clear();
-            item->fd = kInvalid;
-            item->filename.append(get_new_filename());
-            std::string new_file_url = get_new_filename_url(item);
-            item->fd = get_new_log_file_fd(&new_file_url);
-            limit_number_file(item->filedir);
-        }
-    }
     add_to_buff(item->buf, data);
-
 
     return 0;
 }
@@ -300,11 +337,11 @@ int RockLogSystem::init_log_system() {
     //  5.
     init_buf_vec(&buf_list_);
     map_device_buf(&buf_list_, &map_);
-
+    return 0;
 }
 
 std::string RockLogSystem::get_new_filename_url(MapDeviceID_t *map_st) {
-    std::string file_url = get_current_url();
+    std::string file_url(kAbsUrl_);
     file_url.append(*map_st->filedir);
     file_url.append("/");
     file_url.append(map_st->filename);
@@ -312,20 +349,20 @@ std::string RockLogSystem::get_new_filename_url(MapDeviceID_t *map_st) {
     return file_url;
 }
 
-int RockLogSystem::init_st_filename_fd(std::vector<struct MapDeviceID> *map_) {
+int RockLogSystem::init_st_filename_fd(std::vector<struct MapDeviceID> *map) {
 
-    for (int i = 0; i < map_->size(); ++i) {
+    for (int i = 0; i < map->size(); ++i) {
         std::string filename = get_new_filename();
-        if (!map_->at(i).filename.empty()) {
-            map_->at(i).filename.clear();
+        if (!map->at(i).filename.empty()) {
+            map->at(i).filename.clear();
         }
-        map_->at(i).filename.append(filename.data());
-        MapDeviceID_t *map = &map_->at(i);
-        std::string url = get_new_filename_url(map);
+        map->at(i).filename.append(filename.data());
+        MapDeviceID_t *_map = &map->at(i);
+        std::string url = get_new_filename_url(_map);
 
         int fd = get_new_log_file_fd(&url);
         if (fd > 0) {
-            map_->at(i).fd = fd;
+            map->at(i).fd = fd;
         } else {
             return kOpenFileError;
         }
@@ -401,6 +438,23 @@ RockLogSystem::~RockLogSystem() {
     }
 }
 
+std::string RockLogSystem::get_runsh_url(MapDeviceID_t *item, std::string *sh_name) {
+    std::string sh_url;
+    sh_url.append(get_log_file_url(item));
+    _print("sh 1url:%s", sh_url.data());
 
+    sh_url.append("/");
+    sh_url.append(*sh_name);
+    _print("sh url:%s", sh_url.data());
+    return sh_url;
+}
 
+std::string RockLogSystem::get_log_file_url(MapDeviceID_t *st) {
+    std::string log_dir_url = *get_abs_url();
+    log_dir_url.append(*(st->filedir));
+    return log_dir_url;
+}
 
+std::string *RockLogSystem::get_abs_url() {
+    return & kAbsUrl_;
+}

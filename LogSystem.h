@@ -52,7 +52,7 @@ enum ReturnStatus{
     kMapObjNumberError = -2,
     kOpenFileError = -3,
     kGetIndexError = -4,
-    };
+};
 
 #pragma pack(1)
 
@@ -70,8 +70,8 @@ typedef struct MapDeviceID{
 #pragma pack()
 
 enum LimitSize{
-    kBufSize_ = 64, //1024,
-    kFileSize_ = 64, // 1024*1024,
+    kBufSize_ = 256, //1024,
+    kFileSize_ = 1024, // 1024*1024,
     kUrlSize_ = 1024,
 };
 
@@ -90,7 +90,7 @@ public:
 //    //  补充日志信息逻辑控制
 //    int add_log_info(DeviceNo id, const char* data);
     //  补充日志信息
-//    int add_log_info_item(int id, std::string *buf, const char *data);
+    int add_log_info_item(int id, std::string *buf, const char *data);
     int add_log_info_item(int id, const char *data);
 
     //  初始化日志系统
@@ -115,16 +115,20 @@ private:
     std::string can2;
     std::string can3;
 #endif
-    int write_fd_;
-
+    //  绝对路径
+    std::string kAbsUrl_;
+    std::string kscript_url_;
     //  初始化id vec
     int init_id_vec(std::vector<int>* id_list);
     int init_dirname_vec(std::vector<std::string >* dirname_list);
     //  初始化缓存区
     int init_buf_vec(std::vector<std::string >* buf_list);
 
+
     //  获取当前路径
     std::string get_current_url() ;
+    //  获取初始化后的绝对路径
+    std::string *get_abs_url();
     //  获取储存日志的文件夹路径
     std::vector<std::string >* get_device_vec();
     //  补充文件名到向量
@@ -132,7 +136,7 @@ private:
     //  创建日志文件夹及处理文件脚本
     void mk_device_logdir(std::vector<std::string> *dirname);
     //  获得日志文件夹路径
-    std::string get_log_file_url();
+    std::string get_log_file_url(MapDeviceID_t* st);
 
     //  将日志插入buff
     void add_to_buff(std::string *buf, const char *data);
@@ -143,7 +147,7 @@ private:
     //  获取一个新的文件名
     std::string get_new_filename();
     //  初始化文件名和fd
-    int init_st_filename_fd(std::vector<struct MapDeviceID>* map_);
+    int init_st_filename_fd(std::vector<struct MapDeviceID>* map);
     //  获取新文件写入的路径
     std::string get_new_filename_url(MapDeviceID_t *map_st);
     //  将buff内容写入到文件
@@ -160,12 +164,12 @@ private:
     //  通过index返回map item结构体
     MapDeviceID_t *get_mapItem_from_index(int index, std::vector<struct MapDeviceID>* map);
     //  控制文件数量
-    int limit_number_file(std::string *url);
-
+    int limit_number_file(std::string url);
+    //  获取脚本路径
+    std::string get_runsh_url(MapDeviceID_t *item, std::string *sh_name);
 
 
 };
-
 
 
 #endif //STUDYANDPRACTICE_LOGSYSTEM_H
