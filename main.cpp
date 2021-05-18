@@ -140,5 +140,7 @@ int main() {
         memset(bec,0,sizeof bec);
         c.copy_string_while("hello world!", bec);
         printf("be copy: %s\n", bec);
+        int cnt = c.cnt_substring("12332123123122312","123");
+        printf("sub cnt = %d\n", cnt);
     }
 }
