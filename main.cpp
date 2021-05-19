@@ -142,5 +142,16 @@ int main() {
         printf("be copy: %s\n", bec);
         int cnt = c.cnt_substring("12332123123122312","123");
         printf("sub cnt = %d\n", cnt);
+        int len = c.cnt_str_number("   zzzrrrrrrsadada  ");
+        printf("len = %d\n", len);
+
+        char dst[64] = {};
+        c.cp_str_no_empty(" sssssd  ", dst);
+        printf("copy dst: %s\n", dst);
+
+        char *str_odd = nullptr;
+        char *str_even = nullptr;
+        c.getStr1Str2("1a2b3c4dz", &str_even, &str_odd);
+        printf("even: %s odd:%s", str_even, str_odd);
     }
 }

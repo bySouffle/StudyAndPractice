@@ -104,14 +104,86 @@ namespace bys_practice {
                 j = 0;
             }
             if (j == stdlen) {
-                return &src[i-stdlen];
+                return &src[i - stdlen];
             }
-            }
-        if(j<stdlen){
+        }
+        if (j < stdlen) {
             return nullptr;
         }
 
 
+    }
+
+    int CharArrStr::cnt_str_number(char *str) {
+        if (strlen(str) == 0) {
+            return 0;
+        }
+
+        int start = 0;
+        int end = strlen(str) - 1;
+
+        while ((str[start] == ' ') || (str[end] == ' ')) {
+            if (str[start] == ' ') {
+                start++;
+            }
+            if (str[end] == ' ') {
+                end--;
+            }
+        }
+
+        int len = end - start;
+        return len;
+
+    }
+
+    int CharArrStr::cp_str_no_empty(char *str, char *dst) {
+        if (strlen(str) == 0) {
+            return 0;
+        }
+
+        int start = 0;
+        int end = strlen(str) - 1;
+
+        while ((str[start] == ' ') || (str[end] == ' ')) {
+            if (str[start] == ' ') {
+                start++;
+            }
+            if (str[end] == ' ') {
+                end--;
+            }
+        }
+        int len = end - start + 1;
+        memcpy(dst, &str[start], len);
+        dst[end + 1] = 0;
+        return 0;
+    }
+
+    int CharArrStr::getStr1Str2(char *source, char **str1, char **str2) {
+         *str1 = new char[128];
+         *str2 = new char[128];
+        int str_1_cnt = 0;
+        int str_2_cnt = 0;
+
+        for (int i = 0; i < strlen(source); ++i) {
+            char a = source[i];
+            int ctoi = a - '0';
+            if (ctoi < 11) {
+                if (ctoi % 2 == 0) {
+                    (*str1)[str_1_cnt] = a;
+                    str_1_cnt++;
+
+                } else  {
+                    (*str2)[str_2_cnt] = a;
+                    str_2_cnt++;
+
+                }
+            } else {
+
+            }
+        }
+//        str1 = str_1;
+//        str2 = str_2;
+        return 0;
     }
 }
 

@@ -9,6 +9,7 @@ namespace bys_practice {
 #include "string.h"
 
 #include "stdio.h"
+
     class CharArrStr {
     public:
         int copy_string(const char*src, char*dst);
@@ -16,6 +17,9 @@ namespace bys_practice {
         int copy_string_while(const char*src, char*dst);
         int cnt_substring( char*src,const  char* sub);
         char* m_strstr(char *src, const char *sub);
+        int cnt_str_number( char*str);
+        int cp_str_no_empty( char *str, char *dst);
+        int getStr1Str2(char *source, char** str1, char** str2);
 
     };
 
