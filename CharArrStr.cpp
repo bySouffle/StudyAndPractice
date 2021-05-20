@@ -159,8 +159,8 @@ namespace bys_practice {
     }
 
     int CharArrStr::getStr1Str2(char *source, char **str1, char **str2) {
-         *str1 = new char[128];
-         *str2 = new char[128];
+        *str1 = new char[128];
+        *str2 = new char[128];
         int str_1_cnt = 0;
         int str_2_cnt = 0;
 
@@ -172,7 +172,7 @@ namespace bys_practice {
                     (*str1)[str_1_cnt] = a;
                     str_1_cnt++;
 
-                } else  {
+                } else {
                     (*str2)[str_2_cnt] = a;
                     str_2_cnt++;
 
@@ -185,6 +185,41 @@ namespace bys_practice {
 //        str2 = str_2;
         return 0;
     }
+
+    int CharArrStr::getKeyByValue( char *k_v_buf, char *k_buf, char *v_buf, int *v_buf_len) {
+        char *str_eq_after = nullptr;
+        str_eq_after = strchr(k_v_buf, '=');
+        printf("root %s\n", k_v_buf);
+        if (str_eq_after == nullptr) {
+            k_buf = nullptr;
+            v_buf = nullptr;
+            v_buf_len = 0;
+            return 0;
+        } else{
+            int i = 0;
+            int j = 0;
+            while (k_v_buf[i] != '='){
+                if(k_v_buf[i] != ' '){
+                    k_buf[j] = k_v_buf[i];
+                    j++;
+                }
+                i++;
+            }
+            i = 1; j = 0;
+            while (str_eq_after[i] != 0){
+                if(str_eq_after[i] != ' '){
+                    v_buf[j] = str_eq_after[i];
+                    j++;
+                }
+                i++;
+            }
+            *v_buf_len = j;
+        }
+
+        return 0;
+    }
+
+
 }
 
 

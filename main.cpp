@@ -152,6 +152,17 @@ int main() {
         char *str_odd = nullptr;
         char *str_even = nullptr;
         c.getStr1Str2("1a2b3c4dz", &str_even, &str_odd);
-        printf("even: %s odd:%s", str_even, str_odd);
-    }
+        printf("even: %s odd:%s\n", str_even, str_odd);
+
+        char k_v_buf[32] = "    key1  = 9 ";
+        char k_buf[32] = {};
+        char v_buf[32] = {};
+        int v_len = 0;
+        c.getKeyByValue(k_v_buf, k_buf, v_buf, &v_len);
+        printf("k_v_buf = %s\n"
+               "k_buf = %s\n"
+               "v_buf = %s\n"
+               "vlen = %d", k_v_buf,k_buf,v_buf,v_len);
+
+        }
 }

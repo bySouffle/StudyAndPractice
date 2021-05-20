@@ -20,7 +20,7 @@ namespace bys_practice {
         int cnt_str_number( char*str);
         int cp_str_no_empty( char *str, char *dst);
         int getStr1Str2(char *source, char** str1, char** str2);
-
+        int getKeyByValue( char *k_v_buf, char *k_buf, char *v_buf, int *v_buf_len);
     };
 
 
