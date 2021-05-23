@@ -11,6 +11,7 @@
 #include "vector"
 #include "LogSystem.h"
 #include "CharArrStr.h"
+
 int main() {
 #if 0
     {
@@ -133,14 +134,14 @@ int main() {
 
     {
         //  字符串
-       bys_practice::CharArrStr c;
-       char bec[24] = {};
-       c.copy_string("hello world!", bec);
+        bys_practice::CharArrStr c;
+        char bec[24] = {};
+        c.copy_string("hello world!", bec);
         printf("be copy: %s\n", bec);
-        memset(bec,0,sizeof bec);
+        memset(bec, 0, sizeof bec);
         c.copy_string_while("hello world!", bec);
         printf("be copy: %s\n", bec);
-        int cnt = c.cnt_substring("12332123123122312","123");
+        int cnt = c.cnt_substring("12332123123122312", "123");
         printf("sub cnt = %d\n", cnt);
         int len = c.cnt_str_number("   zzzrrrrrrsadada  ");
         printf("len = %d\n", len);
@@ -162,7 +163,24 @@ int main() {
         printf("k_v_buf = %s\n"
                "k_buf = %s\n"
                "v_buf = %s\n"
-               "vlen = %d", k_v_buf,k_buf,v_buf,v_len);
+               "vlen = %d\n", k_v_buf, k_buf, v_buf, v_len);
 
-        }
+//        c.double_arr();
+//        c.double_arr_p();
+//        c.double_int_p();
+        char **n2arr = nullptr;
+        c.mk_n2ArrChar_heap(n2arr, 3, 4);
+        memcpy(n2arr[0],"zzz",4);
+        memcpy(n2arr[1],"xxx",4);
+        memcpy(n2arr[2],"yyy",4);
+
+        c.print_n2Arr(n2arr,3,4);
+        c.free_n2Arr_heap(n2arr,3,4);
+
+        char*test = nullptr;
+        test = (char*) malloc(4);
+        strcpy(test,"zzz");
+        free(test);
+        test = nullptr;
+    }
 }

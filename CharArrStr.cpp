@@ -218,6 +218,136 @@ namespace bys_practice {
 
         return 0;
     }
+    int CharArrStr::double_arr() {
+#if 0
+        char a[2][4] = {{'a','b','c','d'},{'e','f','g','h'}};
+        char*p = &a[0][0];
+        char *p1 = a[0];
+        printf("&a[0][0] = %s\n"
+               "a[0] = %s\n", p, p1);
+#endif
+#if 0
+        char a[3][4] = {{'a','b','c','d'},{'e','f','g','h'},{'e','f','g','h'}};
+        char*p = &a[0][0];
+        char *p1 = a[0];
+        printf("&a[0][0] = %s\n"
+               "a[0] = %s\n", p, p1);
+#endif
+#if 01
+        char a[3][4] = {{"abc"},{"def"},{"ghi"}};
+        char*p = &a[0][0];
+        char *p1 = a[0];
+        printf("&a[0][0] = %s\n"
+               "a[0] = %s\n"
+               "a = %d\n"
+               "a+1 = %d\n", p, p1, a, a+1);
+        for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++) printf("a[i] = %s\n", a[i]);
+#endif
+        return 0;
+    }
+
+    int CharArrStr::double_arr_p() {
+        int x = 4;
+        int y = 3;
+        char **xy = (char**) malloc (y*sizeof (char *));
+    if(xy == nullptr){
+        return 0;
+    }
+
+
+        for (int i = 0; i < x; ++i) {
+            xy[i] = (char*) malloc(x * sizeof (char ));
+        }
+        for (int i = 0; i < x; ++i) {
+            if(i%2==0){
+                memcpy(xy[i],"zzz",4);
+            } else{
+                memcpy(xy[i],"xxx",4);
+            }
+        }
+        for (int i = 0; i < x; ++i) {
+            if(i%2==0){
+                memcpy( *(xy+i), "vvv",4);
+             } else{
+                memcpy( *(xy+i), "ddd",4);
+
+            }
+        }
+
+        for (int i = 0; i < 3; ++i) {
+            printf("%s\n",xy[i]);
+            printf("%s\n",*(xy+i));
+        }
+
+
+        char abc [5] = "1234";
+        char*p = abc;
+        printf("%s[%s]\n", p);
+
+
+
+        return 0;
+    }
+
+    int CharArrStr::double_int_p() {
+        int x = 4;
+        int y = 3;
+        int **p = (int **)malloc(y*sizeof (int *));
+        for (int i = 0; i < y; ++i) {
+            p[i] = (int *) malloc(x*sizeof (int));
+        }
+        p[1][2] = 10;
+        (*(p+1))[3] = 11;
+
+        for (int i = 0; i < y; ++i) {
+            for (int j = 0; j < x; ++j) {
+                printf("%d ",p[i][j]);
+            }
+        }
+
+        for (int i = 0; i < y; ++i) {
+            free(p[i]);
+            p[i]= nullptr;
+        }
+        free(p);
+        p = nullptr;
+
+        return 0;
+    }
+
+
+    int CharArrStr::mk_n2ArrChar_heap(char **&n2ArrChar, int rows, int cols) {
+        n2ArrChar = (char**) malloc( rows *sizeof (char*));
+        if(n2ArrChar == nullptr){
+            return -1;
+        }
+        for (int i = 0; i < rows; ++i) {
+            n2ArrChar[i] = (char *) malloc(cols*sizeof (char ));
+            if(n2ArrChar[i] == nullptr){
+                return -2;
+            }
+        }
+        return 0;
+    }
+
+    int CharArrStr::free_n2Arr_heap(char **&n2Arr, int rows, int cols) {
+        for (int i = 0; i < rows; ++i) {
+            free(n2Arr[rows]);
+            n2Arr[rows] = nullptr;
+        }
+        free(n2Arr);
+        n2Arr = nullptr;
+        return 0;
+    }
+
+    int CharArrStr::print_n2Arr(char **&n2Arr, int rows, int cols) {
+        printf("\t=====\tStart\t=====\t\n");
+        for (int i = 0; i < rows; ++i) {
+            printf("\trow[%d]: %s\n", i, n2Arr[i]);
+        }
+        printf("\t=====\tend\t=====\t\n");
+        return 0;
+    }
 
 
 }
