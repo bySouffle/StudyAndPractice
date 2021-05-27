@@ -182,5 +182,28 @@ int main() {
         strcpy(test,"zzz");
         free(test);
         test = nullptr;
+
+        char m_src[100] = {};
+        strcpy(m_src, "abcd1111112222abcdqqabcdqqq");
+        char m_dst[100] = {};
+
+        c.replaceSubstr2(m_src,m_dst,"abcd","dcba");
+        _print("after replace: %s\n%s", m_src,m_dst);
+
+        char m_buff[10][30];
+        int mm = sizeof(m_buff);
+        int nn = sizeof (m_buff[0]);
+        char *str = "aaaaaa,vvvvv,cccccc,ssssss,aaaaaa,";
+        int m_cnt = 0;
+//        c.spitString(str,',',m_buff,&m_cnt);
+        char **mm_buf = nullptr;
+        c.spitString2(str,',',mm_buf, &m_cnt);
+        for (int i = 0; i < 10; ++i) {
+            printf("m_buff[i] = %s\n", mm_buf[i]);
+        }
+        printf("cnt = %d\n", m_cnt);
+
+
     }
+
 }

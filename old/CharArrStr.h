@@ -30,6 +30,11 @@ namespace bys_practice {
         int free_n2Arr_heap(char**&n2Arr, int rows, int cols);
         int print_n2Arr(char**&n2Arr, int rows, int cols);
 
+        int replaceSubstr(char* src, char*dst, char *sub, char* re_sub);
+        int replaceSubstr2(char* src, char*dst, char *sub, char* re_sub);
+        int spitString(const char*str, char c, char buf[10][30],int *count);
+        int spitString2(const char *str, char c, char **myp, int *count);
+
     };
 
 

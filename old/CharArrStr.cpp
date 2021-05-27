@@ -349,6 +349,77 @@ namespace bys_practice {
         return 0;
     }
 
+    int CharArrStr::replaceSubstr(char *src, char *dst, char *sub, char *re_sub) {
+//        dst = src;
+        char* find_char = nullptr;
+        while ( (find_char = strstr(src,sub)) != nullptr  ){
+            memcpy(find_char,re_sub, strlen(re_sub));
+            src += strlen(sub);
+        }
+        return 0;
+    }
+
+    int CharArrStr::spitString(const char *str, char c, char (*buf)[30], int *count) {
+        char *sub = nullptr;
+        char cs[4] = {c};
+        int len = strlen(str) +1;
+        char m_str[len];
+        memcpy(m_str,str,len);
+
+        sub = strtok(m_str,cs);
+        int n = 0;
+        while (sub!= nullptr){
+
+            memcpy(buf[n],sub, strlen(sub)+1);
+            n++;
+            sub = strtok(NULL, cs);
+
+        }
+        int m = sizeof (*str);
+        int nn = sizeof (&str[0]);
+        *count = (sizeof (str))/(sizeof (str[0]));
+        return 0;
+    }
+
+    int CharArrStr::spitString2(const char *str, char c, char **myp, int *count) {
+        char **n2arr_heap = (char**) malloc(10*sizeof (char *));
+        for (int i = 0; i < 10; ++i) {
+            n2arr_heap[i] = (char *) malloc(30*sizeof (char ));
+        }
+        char* sub_str = nullptr;
+        int i = 0;
+        char spl[4] = {c};
+//        spl[0] = c;
+        char copy_str[100] = {};
+        memcpy(copy_str, str, strlen(str)+1);
+        sub_str = strtok(copy_str,spl);
+        while (sub_str!= nullptr){
+            strcpy(n2arr_heap[i], sub_str);
+            sub_str = strtok(nullptr, spl);
+        }
+        myp = n2arr_heap;
+//        *count = sizeof(n2arr_heap)/sizeof(n2arr_heap[0]);
+
+        return 0;
+    }
+
+    int CharArrStr::replaceSubstr2(char *src, char *dst, char *sub, char *re_sub) {
+        char *start = src;
+        char *find = nullptr;
+        char m_dst[128] = {};
+
+        while ( (find = strstr(start, sub)) != nullptr ){
+            strncat(m_dst, start, find-start);
+            strcat(m_dst, re_sub);
+            start=start+ strlen(sub)+(find-start);
+        }
+        strcat(m_dst, start);
+
+        memcpy(dst, m_dst,sizeof (m_dst));
+
+        return 0;
+    }
+
 
 }
 

@@ -1,16 +1,9 @@
 cmake_minimum_required(VERSION 3.19)
-project(StudyAndPractice)
-
 set(CMAKE_CXX_STANDARD 14)
+project(main)
 
-include_directories(.)
+include_directories(StudyPractice)
 
-add_executable(StudyAndPractice
-        CommonElement.cpp
-        CommonElement.h
-        SCompositeType.cpp
-        SCompositeType.h
-        FileOperate.cpp
-        FileOperate.h
-        main.cpp
-        CppBase.cpp CppBase.h DictionarySearch.cpp DictionarySearch.h heap_stack_global.cpp heap_stack_global.h LogSystem.cpp LogSystem.h CharArrStr.cpp CharArrStr.h)
+add_subdirectory(googletest-1.10.x)
+add_subdirectory(StudyPractice)
+add_subdirectory(UnitgTest)
