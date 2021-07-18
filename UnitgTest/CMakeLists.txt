@@ -1,12 +1,11 @@
 project(PracticeTEST)
 
 
-set(gtest /googletest-1.10.x/googletest)
-include_directories(${gtest}/include ${gtest})
+set(gtest_SOURCES /googletest-1.10.x/googletest)
+include_directories(${gtest_SOURCES}/include ${gtest_SOURCES})
 
-set(beTest /UnitgTest)
-include_directories(${beTest})
-
+set(beTest /UnitgTest )
+include_directories($beTest})
 
 set(testSource
         test1.cpp)
