@@ -144,3 +144,130 @@ int struct_offset(){
 TEST(struct_offset, offset){
     struct_offset();
 }
+
+
+void ip_calc_ipchecksum(void *pack_info){
+    int8_t* m_pack_info = (int8_t*)pack_info  ;
+    m_pack_info[24] = 0;
+    m_pack_info[25] = 0;
+
+    m_pack_info = &m_pack_info[13];
+    printf("m_pack_info: %x\r\n", *m_pack_info++);
+    int index = 0;
+    int ip_index = 0;
+
+    int32_t calc_sum = 0;
+    int16_t ip_head[10] = {};
+    int16_t cksum = 0;
+
+    while (index != 20)
+    {
+        /* code */
+        ip_head[ip_index] = ( ip_head[ip_index] |( m_pack_info[index] & 0xFF) ) << 8;
+        printf("m_pack_info[%d] = %x\r\n", index,  m_pack_info[index] );
+
+        ip_head[ip_index] = ( ip_head[ip_index] | (m_pack_info[index+1] & 0xFF) );
+        printf("m_pack_info[%d] = %x\r\n", index+1,  m_pack_info[index+1] );
+        printf("ip_head[%d] = %x\r\n",ip_index,  ip_head[ip_index] );
+        calc_sum += (ip_head[ip_index] & 0xffff );
+        printf("zzzzzzzzzzz%d %x %x\r\n", index, ip_head[ip_index], calc_sum);
+        index += 2;
+        ip_index += 1;
+    }
+    if(index == 20){
+        calc_sum=(calc_sum>>16)+(calc_sum&0xffff);  //把高位的进位，加到低八位，其实是32位加法
+        calc_sum+=(calc_sum>>16);  //add carry
+        cksum=~calc_sum;   //取反\
+
+        printf("1111111ck_sum = %x\r\n", calc_sum);
+        printf("2222222ck_sum = %x\r\n", cksum);
+    }
+
+
+}
+
+void ip_calc_ipchecksum_1(void *pack_info){
+    int8_t* m_pack_info = (int8_t*)pack_info  ;
+    m_pack_info[24] = 0;
+    m_pack_info[25] = 0;
+
+    m_pack_info = &m_pack_info[13];
+    printf("m_pack_info: %x\r\n", *m_pack_info++);
+    int index = 0;
+    int ip_index = 0;
+
+    int32_t calc_sum = 0;
+    int16_t ip_head[10] = {};
+    int32_t cksum = 0;
+
+    while (index != 20)
+    {
+        /* code */
+        ip_head[ip_index] = ( ip_head[ip_index] |( m_pack_info[index] & 0xFF) ) << 8;
+        printf("m_pack_info[%d] = %x\r\n", index,  m_pack_info[index] );
+
+        ip_head[ip_index] = ( ip_head[ip_index] | (m_pack_info[index+1] & 0xFF) );
+        printf("m_pack_info[%d] = %x\r\n", index+1,  m_pack_info[index+1] );
+
+        printf("ip_head[%d] = %x\r\n",ip_index,  ip_head[ip_index] );
+
+        calc_sum += (ip_head[ip_index] & 0xffff );
+
+
+        printf("zzzzzzzzzzz%d %x %x\r\n", index, ip_head[ip_index], calc_sum);
+        index += 2;
+        ip_index += 1;
+    }
+    if(index == 20){
+        calc_sum=(calc_sum>>16)+(calc_sum&0xffff);  //把高位的进位，加到低八位，其实是32位加法
+        calc_sum+=(calc_sum>>16);  //add carry
+         calc_sum = 0x1e21;
+//        calc_sum = 0xd997;
+        cksum = ( ((0x000F-(calc_sum)&0xF000) >> 12) << 12 |
+                  ((0x000F-(calc_sum)&0x0F00) >> 8 ) << 8  |
+                  ((0x000F-(calc_sum)&0x00F0) >> 4 ) << 4  |
+                  (0x000F-(calc_sum)&0x000F)   );
+
+        printf("%x %x %x %x\r\n", ((0x000F-(calc_sum)&0xF000) >> 12) ,
+               ((0x000F-(calc_sum)&0x0F00) >> 8 ),
+               ((0x000F-(calc_sum)&0x00F0) >> 4 ),
+               (0x000F-(calc_sum)&0x000F));
+        // cksum=~calc_sum;   //取反\
+
+        printf("1111111ck_sum = %x\r\n", calc_sum);
+        printf("2222222ck_sum = %x\r\n", cksum);
+    }
+
+
+}
+
+
+TEST(ip_calc_ipchecksum, check){
+uint8_t iphead[] = {
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff,
+
+        //  Type
+        0x45, 0x00,
+        //  Length
+        0x00, 0x25,
+        //  Identification
+        0xd4, 0xc3,
+        //  flag offset
+        0x00, 0x00,
+        //  TTL Protocol
+        0x80, 0x11,
+        //  CheckSum    !!!!!
+        0x11, 0x11,
+        //  src ip
+        0xc0, 0xa8, 0x01, 0x6f,
+        //  dst ip
+        0xc0, 0xa8, 0x01, 0x65,
+
+        //  padding
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+};
+    ip_calc_ipchecksum_1(iphead);
+
+}
