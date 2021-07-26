@@ -11,6 +11,8 @@
 class Sub1 {
 public:
     bool findNumberIn2DArray(std::vector<std::vector<int>>& matrix, int target);
+    //  [1,2,3,5] target 3 1+2
+    std::vector<int> twoSum(std::vector<int>& nums, int target);
 };
 
 

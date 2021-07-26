@@ -33,6 +33,14 @@ TEST_F(GTestLeetcode, lab4){
     target = m_test->findNumberIn2DArray(matrix, 14);
     EXPECT_TRUE(target);
 
+}
 
+
+TEST_F(GTestLeetcode, twoSum){
+    std::vector<int> nums = {2,7,11,15};
+    int target = 9;
+    std::vector<int>rst  = m_test->twoSum(nums,target);
+    EXPECT_EQ(rst[0],0);
+    EXPECT_EQ(rst[1],1);
 
 }
