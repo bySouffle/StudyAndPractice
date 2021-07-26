@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 #include "nnarr.h"
 #include "split_ip.h"
+#include "OverloadOperator.h"
 
 class subtest_pp : public testing::Test {
 protected:
@@ -270,4 +271,31 @@ uint8_t iphead[] = {
 };
     ip_calc_ipchecksum_1(iphead);
 
+}
+
+
+//class OvOptTest :public testing::Test{
+//protected:
+//    virtual void SetUp(){
+//        ovopt = new OverloadOperator("test1");
+//    }
+//    virtual void TearDown(){
+//        delete ovopt;
+//    }
+//
+//    OverloadOperator * ovopt;
+//};
+
+TEST(OvOptTest, optoverload){
+    OverloadOperator t1("test");
+    OverloadOperator t2(t1);
+    t2.printf_str();
+
+    t1 == t2? printf("eq"): printf("ng");
+    t1 != t2? printf("ng"): printf("eq");
+
+    OverloadOperator("zzz");    //  匿名函数对象
+    t1(1,2);
+    OverloadOperator t3("");
+    t3 = t1;
 }
